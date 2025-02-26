@@ -2,6 +2,7 @@
 
 using System.Linq;
 using System.Collections;
+using System.Threading;
 
 using DelegatesStudyingConsoleApp.Classes;
 
@@ -60,8 +61,10 @@ caster.Cast(2);
 // Cast 4 dice to show flexibility with more dice
 Console.WriteLine("\nCasting 4 dice...");
 caster.Cast(4);
-
-
+var searcher = new FileSearch();
+searcher.SendData += Receiver;
+searcher.SendData += ReceiverThreading;
+Task.Run(() => searcher.Search("/Volumes/LadoB/Programacao"));
 
 // A static method that matches the Notify delegate signature (takes a string, returns void).
 // This is the callback that gets executed when the OnMessageSent event fires.
@@ -76,4 +79,20 @@ void CalculateTotal(List<short> diceResults)
 {
     int total = diceResults.Select(x => (int)x).Sum();
     Console.WriteLine($"Total roll value: {total}");
+}
+
+void Receiver(string filename)
+{
+    Console.WriteLine($"Receiving file: {filename}");
+}
+
+void ReceiverThreading(string filename)
+{
+    Task.Run(() =>
+    {
+        Console.WriteLine($"Receiving - 2 - file at: {DateTime.Now.ToString("HH:mm:ss")}");
+        Receiver(filename);
+        Thread.Sleep(5000);
+        Console.WriteLine($"**********************************");
+    });
 }
