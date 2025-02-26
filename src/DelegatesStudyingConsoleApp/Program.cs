@@ -62,8 +62,8 @@ caster.Cast(2);
 Console.WriteLine("\nCasting 4 dice...");
 caster.Cast(4);
 var searcher = new FileSearch();
-searcher.SendData += Receiver;
-searcher.SendData += ReceiverThreading;
+searcher.FileFound += Receiver;
+searcher.FileFound += ReceiverThreading;
 Task.Run(() => searcher.Search("/Volumes/LadoB/Programacao"));
 
 // A static method that matches the Notify delegate signature (takes a string, returns void).

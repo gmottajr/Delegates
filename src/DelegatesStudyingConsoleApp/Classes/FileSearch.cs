@@ -2,8 +2,8 @@ namespace DelegatesStudyingConsoleApp.Classes;
 
 public class FileSearch
 {
-    public delegate void SearchDelegate(string directorySearch);
-    public SearchDelegate SendData { get; set; }
+    public delegate void FileFoundHandler(string fileName);
+    public event FileFoundHandler FileFound;
 
     public void Search(string directorySearch)
     {
@@ -13,13 +13,13 @@ public class FileSearch
             {
                 foreach (var aFile in Directory.GetFiles(dir))
                 {
-                    SendData(aFile);
+                    FileFound?.Invoke(aFile);
                 }
             }
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Console.WriteLine($"Error during search: {e.Message}");
         }
     }
 }
