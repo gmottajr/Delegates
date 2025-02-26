@@ -1,0 +1,74 @@
+# Ignore Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore JetBrains Rider files
+.idea/
+*.iml
+*.dotSettings.user
+
+# Ignore Visual Studio Code files
+.vscode/
+*.code-workspace
+
+# Ignore build and output directories
+bin/
+obj/
+out/
+
+# Ignore dependencies
+*.dll
+*.exe
+*.pdb
+*.log
+*.cache
+*.so
+*.dylib
+*.a
+*.lib
+
+# Ignore user-specific files
+*.swp
+*.sln.cache
+*.sln.ide
+*.csproj.user
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.old
+
+# Ignore test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Ignore .NET-related files
+project.lock.json
+project.assets.json
+appsettings.local.json
+appsettings.Development.json
+
+# Ignore environment files
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+secrets.json
+
+# Ignore logs and debug files
+*.log
+logs/
+debug/
+trace/
