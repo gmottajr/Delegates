@@ -11,15 +11,15 @@ The purpose of this repository is to provide:
 - ⚡ Insights into how **.NET 9** enhances delegate usage.
 
 ## 🤔 What Are Delegates?
-A **delegate** is a type that represents references to methods with a specific signature. It allows methods to be passed as parameters, assigned to variables, and invoked dynamically. Think of it as a type-safe function pointer with additional capabilities like multicasting.
+A **delegate** is a type that holds references to methods with a matching signature. It’s like a type-safe function pointer, enabling methods to be passed as parameters, stored in variables, or invoked dynamically—complete with multicasting support. Below, we’ll see them in action, from basic callbacks to complex event systems.
 
 ## 📌 Key Scenarios Covered
-1. 📜 **Basic Delegate Usage** - Declaring and invoking delegates.
-2. 🎛️ **Event Handling** - Using delegates to manage event-driven programming.
-3. 🔄 **Callbacks** - Passing methods as parameters for flexible execution.
-4. 🏆 **Multicast Delegates** - Invoking multiple methods using a single delegate.
-5. 🎯 **Delegates in LINQ & Functional Programming** - Using built-in delegate types like `Func<T>` and `Action<T>`.
-6. ⚙️ **Asynchronous Programming with Delegates** - Defining callbacks for async operations.
+1. 📜 **Declaring and Using Delegates** - Basic setup and invocation.
+2. 🎛️ **Handling Events** - Managing event-driven programming.
+3. 🔄 **Implementing Callbacks** - Passing methods for flexible execution.
+4. 🏆 **Using Multicast Delegates** - Calling multiple methods at once.
+5. 🎯 **Leveraging LINQ & Functional Programming** - Using `Func` and `Action`.
+6. ⚙️ **Supporting Async Programming** - Callbacks for async tasks.
 
 ## 🔁 Callbacks and Observables with Delegates
 One of the primary uses of delegates is implementing **callbacks**, where a method is passed as a parameter and invoked at a later time. This is particularly useful in **asynchronous programming** and event-driven architectures. Additionally, delegates integrate seamlessly with **Observables** in reactive programming (like in `System.Reactive`), allowing for real-time event streaming and handling. Observables combined with delegates help manage **data streams**, ensuring efficient handling of events and updates in applications.
@@ -72,6 +72,122 @@ class Program
     }
 }
 ```
+
+
+## 🔍 FileSearch Class - A Practical Demonstration
+### ✨ Overview
+The `FileSearch` class is a comprehensive example showcasing the power of **delegates and events** in a real-world file search operation. It demonstrates how to use **multicasting delegates, recursion, error handling, and event-driven programming** effectively.
+
+### 🏗️ Class Implementation
+The `FileSearch` class defines two key delegate events:
+- **FileFoundHandler** - Triggered when a file is discovered.
+- **SearchErrorHandler** - Triggered when an error occurs during the search process.
+
+```csharp
+public class FileSearch
+{
+    public delegate void FileFoundHandler(string fileName);
+    public delegate void SearchErrorHandler(string errorMessage);
+    public event FileFoundHandler FileFound;
+    public event SearchErrorHandler SearchFailed;
+
+    public void Search(string directorySearch)
+    {
+        if (string.IsNullOrEmpty(directorySearch) || !Directory.Exists(directorySearch))
+        {
+            string error = $"Invalid directory: {directorySearch}";
+            Console.WriteLine(error);
+            SearchFailed?.Invoke(error);
+            return;
+        }
+
+        try
+        {
+            ProcessDirectory(directorySearch);
+        }
+        catch (Exception e)
+        {
+            string error = $"Error during search: {e.Message}";
+            Console.WriteLine(error);
+            SearchFailed?.Invoke(error);
+        }
+    }
+
+    private void ProcessDirectory(string dir)
+    {
+        foreach (var aFile in Directory.GetFiles(dir))
+        {
+            FileFound?.Invoke(aFile);
+        }
+        foreach (var subDir in Directory.GetDirectories(dir))
+        {
+            ProcessDirectory(subDir);
+        }
+    }
+}
+```
+
+### 🔬 Usage Example
+```csharp
+class Program
+{
+    static void Main()
+    {
+        FileSearch fs = new FileSearch();
+
+        fs.FileFound += LogFileDetails;
+        fs.FileFound += FilterTextFiles;
+        fs.FileFound += CountFiles;
+        
+        fs.SearchFailed += LogError;
+        fs.SearchFailed += AlertUser;
+
+        Console.WriteLine("Searching a valid directory...");
+        fs.Search(@"C:\\TestFolder");
+
+        Console.WriteLine("\nSearching an invalid directory...");
+        fs.Search(@"C:\\NonExistentFolder");
+    }
+
+    static void LogFileDetails(string fileName)
+    {
+        Console.WriteLine($"Found file: {fileName} (Size: {new FileInfo(fileName).Length} bytes)");
+    }
+
+    static void FilterTextFiles(string fileName)
+    {
+        if (Path.GetExtension(fileName).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+        {
+            Console.WriteLine($"Text file detected: {fileName}");
+        }
+    }
+
+    static int fileCount = 0;
+    static void CountFiles(string fileName)
+    {
+        fileCount++;
+        Console.WriteLine($"Total files found so far: {fileCount}");
+    }
+
+    static void LogError(string errorMessage)
+    {
+        Console.WriteLine($"ERROR LOG: {errorMessage}");
+    }
+
+    static void AlertUser(string errorMessage)
+    {
+        Console.WriteLine($"ALERT: Search failed - {errorMessage}");
+    }
+}
+```
+
+### 🔥 Features Demonstrated
+1. **Multicasting Events** - Multiple methods handle `FileFound` and `SearchFailed` events.
+2. **Recursive Search** - `ProcessDirectory` ensures nested directories are processed.
+3. **Error Handling** - Handles invalid directories and exceptions gracefully.
+4. **Practical Use Cases** - Logging, filtering, and counting files using event-driven programming.
+5. **Subscribing Actions to Observables** - Handlers are subscribed to the `FileFound` and `SearchFailed` events using `+=`, demonstrating the power of **delegates and event-driven programming** in C#.
+
 
 ## 🚀 Running the Code
 ### 🔧 Prerequisites
