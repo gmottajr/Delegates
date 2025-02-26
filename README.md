@@ -93,7 +93,5 @@ Feel free to **fork**, **open issues**, or **submit pull requests** to improve t
 This project is licensed under the **MIT License**.
 
 ## 👨‍💻 Author
-[Your Name] - Exploring C# with .NET 9 🚀
+[Gerson Motta Jr] - Exploring C# with .NET 9 🚀
 
----
-Let me know if you'd like any modifications or additional sections! 😊
