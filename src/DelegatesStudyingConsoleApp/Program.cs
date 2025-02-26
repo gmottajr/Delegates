@@ -66,7 +66,71 @@ searcher.FileFound += Receiver;
 searcher.FileFound += ReceiverThreading;
 Task.Run(() => searcher.Search("/Volumes/LadoB/Programacao"));
 
-// A static method that matches the Notify delegate signature (takes a string, returns void).
+
+// Initialize fileCount
+int fileCount = 0;
+
+// Create a FileSearch instance
+FileSearch fs = new FileSearch();
+
+// Subscribe multiple handlers to FileFound event
+fs.FileFound += LogFileDetails;      // Logs file info
+fs.FileFound += FilterTextFiles;     // Filters for .txt files
+fs.FileFound += CountFiles;          // Counts total files found
+
+// Subscribe multiple handlers to SearchFailed event
+fs.SearchFailed += LogError;         // Logs errors to console
+fs.SearchFailed += AlertUser;        // Simulates a user alert
+
+// Test 1: Search a valid directory (replace with a real path on your machine)
+Console.WriteLine("Searching a valid directory...");
+fs.Search(@"/Volumes/LadoB/");
+
+// Test 2: Search an invalid directory to trigger validation and SearchFailed
+Console.WriteLine("\nSearching an invalid directory...");
+fs.Search(@"/Volumes/LadoB/Programacao");
+
+// Test 3: Search a restricted directory (e.g., system folder) to trigger exception
+// Note: This might not work without elevated permissions—adjust as needed
+Console.WriteLine("\nSearching a restricted directory...");
+fs.Search(@"/Volumes/LadoA");
+
+
+// FileFound handler: Logs file details
+void LogFileDetails(string fileName)
+{
+    Console.WriteLine($"Found file: {fileName} (Size: {new FileInfo(fileName).Length} bytes)");
+}
+
+// FileFound handler: Filters and reports only .txt files
+void FilterTextFiles(string fileName)
+{
+    if (Path.GetExtension(fileName).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+    {
+        Console.WriteLine($"Text file detected: {fileName}");
+    }
+}
+
+// FileFound handler: Counts files (using a static counter)
+void CountFiles(string fileName)
+{
+    fileCount++;
+    Console.WriteLine($"Total files found so far: {fileCount}");
+}
+
+// SearchFailed handler: Logs errors
+void LogError(string errorMessage)
+{
+    Console.WriteLine($"ERROR LOG: {errorMessage}");
+}
+
+// SearchFailed handler: Simulates alerting the user
+void AlertUser(string errorMessage)
+{
+    Console.WriteLine($"ALERT: Search failed - {errorMessage}");
+}
+
+// method that matches the Notify delegate signature (takes a string, returns void).
 // This is the callback that gets executed when the OnMessageSent event fires.
 void DisplayMessage(string msg)
 {
