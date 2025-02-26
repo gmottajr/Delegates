@@ -3,23 +3,41 @@ namespace DelegatesStudyingConsoleApp.Classes;
 public class FileSearch
 {
     public delegate void FileFoundHandler(string fileName);
+    public delegate void SearchErrorHandler(string errorMessage);
     public event FileFoundHandler FileFound;
+    public event SearchErrorHandler SearchFailed;
 
     public void Search(string directorySearch)
     {
+        if (string.IsNullOrEmpty(directorySearch) || !Directory.Exists(directorySearch))
+        {
+            string error = $"Invalid directory: {directorySearch}";
+            Console.WriteLine(error);
+            SearchFailed?.Invoke(error);
+            return;
+        }
+
         try
         {
-            foreach (var dir in Directory.GetDirectories(directorySearch))
-            {
-                foreach (var aFile in Directory.GetFiles(dir))
-                {
-                    FileFound?.Invoke(aFile);
-                }
-            }
+            ProcessDirectory(directorySearch);
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error during search: {e.Message}");
+            string error = $"Error during search: {e.Message}";
+            Console.WriteLine(error);
+            SearchFailed?.Invoke(error);
+        }
+    }
+
+    private void ProcessDirectory(string dir)
+    {
+        foreach (var aFile in Directory.GetFiles(dir))
+        {
+            FileFound?.Invoke(aFile);
+        }
+        foreach (var subDir in Directory.GetDirectories(dir))
+        {
+            ProcessDirectory(subDir);
         }
     }
 }
