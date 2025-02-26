@@ -1,4 +1,8 @@
+using System.Runtime.InteropServices.JavaScript;
+
 namespace DelegatesStudyingConsoleApp.Classes;
+
+public delegate void TaskCompleted(string result);
 
 // Defines a Worker class to simulate some task-performing entity
 public static class Worker
@@ -18,5 +22,14 @@ public static class Worker
         // This calls whatever method was passed to Process when it’s done
         callback("All set!");
         callback("Would you like to do this again?!");
+    }
+    
+    public static void DoWork(string message, TaskCompleted callback)
+    {
+        Console.WriteLine("Processing...");
+        Console.WriteLine("Working...");
+        Console.WriteLine($"{message} : {DateTime.Now.ToString("hh:mm:ss tt")}");
+        Console.WriteLine("-------------------------------------------");
+        callback("Task done!");
     }
 }
