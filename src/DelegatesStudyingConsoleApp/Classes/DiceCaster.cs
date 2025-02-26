@@ -8,7 +8,7 @@ public delegate void CastHandler(List<short> castResults);
 public class DiceCaster
 {
     // Event based on DiceCastHandler delegate; subscribers get the list of dice results
-    public event CastHandler OnCast;
+    public event CastHandler OnCast;  
     
     // Random number generator for simulating dice rolls (1-6)
     private readonly Random _random = new Random();
